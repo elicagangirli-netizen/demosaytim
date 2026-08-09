@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+<style>
+*{box-sizing:border-box} :root{--p:#9d45ff;--p2:#d27aff;--bg:#080808;--card:#111;--line:#2a2a2a;--muted:#999;--danger:#d93636;--ok:#18a957}
+body{margin:0;background:var(--bg);color:#fff;font-family:Arial,Helvetica,sans-serif}.top{position:sticky;top:0;z-index:20;background:#0e0e0e;border-bottom:1px solid var(--line);padding:18px 24px;display:flex;justify-content:space-between;gap:15px;align-items:center}.top h1{margin:0;color:var(--p2);font-size:24px}.top p{margin:5px 0 0;color:#888}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 78px)}aside{background:#0c0c0c;border-right:1px solid var(--line);padding:16px;position:sticky;top:78px;height:calc(100vh - 78px);overflow:auto}aside button{width:100%;text-align:left;background:#151515;border:1px solid var(--line);margin-bottom:8px;color:#ddd}aside button.active,aside button:hover{background:#281037;border-color:#8b40c9;color:#fff}main{width:100%;max-width:1150px;margin:auto;padding:28px}.section{display:none}.section.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:20px}.card h2{margin:0 0 18px;color:var(--p2)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}label{display:block;color:#ccc;margin:10px 0 7px}input,select,textarea{width:100%;padding:12px;border-radius:9px;border:1px solid #333;background:#080808;color:#fff;outline:none}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--p)}button{border:0;border-radius:9px;padding:11px 16px;background:var(--p);color:#fff;font-weight:700;cursor:pointer}button:hover{filter:brightness(1.12)}button.secondary{background:#252525}button.danger{background:var(--danger)}button.ok{background:var(--ok)}.savebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid #242424}.savebar .hint{color:#777;font-size:13px}.notice{padding:12px;border-radius:9px;background:#0b0b0b;border:1px solid var(--line);color:#aaa;margin-top:12px}.notice.okmsg{color:#70e59d}.item{display:flex;gap:14px;align-items:center;padding:14px;margin:10px 0;background:#090909;border:1px solid var(--line);border-radius:11px}.thumb{width:65px;height:65px;border-radius:9px;object-fit:cover;background:#222;flex:none}.item-info{flex:1;min-width:0}.item-info strong{display:block;margin-bottom:5px}.item-info small{color:#999}.item-actions{display:flex;gap:7px;flex-wrap:wrap}.badge{display:inline-block;margin-top:6px;padding:4px 8px;border-radius:20px;background:#251132;color:#d9b4ff;font-size:12px}.empty{color:#777;padding:18px;text-align:center}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#090909;border:1px solid var(--line);border-radius:12px;padding:18px}.stat b{font-size:28px;color:var(--p2)}.stat span{display:block;color:#888;margin-top:6px}.codebox{width:100%;min-height:420px;font-family:Consolas,monospace;font-size:13px;line-height:1.5;color:#ddd}.sticky-config{position:sticky;bottom:12px;z-index:15;margin-top:10px}.final{background:linear-gradient(135deg,#21102d,#120b18);border:1px solid #65358a}.final h2{color:#e3b8ff}.row{display:flex;gap:10px;flex-wrap:wrap}.category-pending{color:#f5d36a;font-size:13px}.danger-text{color:#ff8888}.logo-preview{max-height:70px;max-width:220px;border-radius:8px;margin-top:10px;display:none}.hidden{display:none!important}
+@media(max-width:850px){.layout{grid-template-columns:1fr}aside{position:static;height:auto;display:flex;overflow:auto;gap:8px;border-right:0;border-bottom:1px solid var(--line)}aside button{min-width:150px;margin:0}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}main{padding:16px}.top{position:static}.item{align-items:flex-start;flex-wrap:wrap}.item-actions{width:100%}}
+</style>
+
+<style id="product-cms-style">
+/* REAL PRODUCT CMS */
+.product-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:18px 0}
+.product-tool{padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(255,255,255,.03)}
+.product-tool h4{margin:0 0 7px;font-size:12px;letter-spacing:1px}
+.product-tool p{margin:0;color:#aaa;font-size:11px;line-height:1.5}
+.product-tool button{margin-top:10px;width:100%}
+.backup-status{font-size:11px;color:#bdb7c4;margin-top:8px;min-height:16px}
+.drop-zone{border:1px dashed rgba(190,75,255,.45);border-radius:14px;padding:20px;text-align:center;background:rgba(175,55,255,.05);margin-top:10px}
+.drop-zone.dragover{background:rgba(175,55,255,.12);border-color:#cf5cff}
+.hidden-file{display:none!important}
+.preview-thumb{width:70px;height:70px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.12);vertical-align:middle;margin-right:10px}
+.product-note{font-size:11px;color:#a9a3ad;line-height:1.55}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div><h1>ROYA — Admin Panel</h1><p>Saytın bütün əsas məlumatlarını idarə et</p></div>
+  <div class="top-actions"><button class="ok" onclick="generateConfig()">📄 TAM CONFIG.JS KODU</button></div>
+</header>
+<div class="layout">
+<aside>
+  <button class="active" onclick="openTab('dashboard',this)">📊 İdarə paneli</button>
+  <button onclick="openTab('site',this)">⚙️ Sayt ayarları</button>
+  <button onclick="openTab('songs',this)">🎵 Mahnılar</button>
+  <button onclick="openTab('clips',this)">🎬 Kliplər</button>
+  <button onclick="openTab('categories',this)">📂 Kateqoriyalar</button>
+  <button onclick="openTab('appearance',this)">🖼️ Görünüş</button>
+  <button onclick="openTab('social',this)">🌐 Sosial & Əlaqə</button>
+  <button onclick="openTab('gallery',this)">🖼️ Qalereya</button>
+  <button onclick="openTab('final',this)">🚀 Yekun / Config</button>
+</aside>
+<main>
+<section id="dashboard" class="section active">
+ <div class="card"><h2>📊 İdarə paneli</h2><div class="stats"><div class="stat"><b id="statSongs">0</b><span>Mahnı</span></div><div class="stat"><b id="statClips">0</b><span>Klip</span></div><div class="stat"><b id="statCats">0</b><span>Kateqoriya</span></div><div class="stat"><b id="statSocial">0</b><span>Sosial / əlaqə</span></div></div></div>
+ <div class="card"><h2>⚡ Sürətli əməliyyat</h2><div class="row"><button onclick="go('songs')">➕ Mahnı əlavə et</button><button onclick="go('clips')">➕ Klip əlavə et</button><button class="ok" onclick="generateConfig()">📄 Tam Config.js kodu</button></div><div id="dashMsg" class="notice">Dəyişiklik etdikdən sonra həmin bölmədəki “Yadda saxla” düyməsinə bas.</div></div>
+</section>
+
+<section id="site" class="section">
+ <div class="card"><h2>⚙️ Ümumi sayt ayarları</h2>
+  <div class="grid"><div><label>Sayt adı</label><input id="siteName"></div><div><label>Başlıq</label><input id="siteTitle"></div></div>
+  <label>Açıqlama</label><textarea id="siteDescription"></textarea>
+  <label>Haqqımda mətni</label><textarea id="siteAbout"></textarea>
+  <div class="grid"><div><label>Logo linki</label><input id="siteLogo" placeholder="images/logo.png və ya https://..."><img id="logoPreview" class="logo-preview"></div><div><label>Əsas sayt linki</label><input id="siteUrl" placeholder="https://..."></div></div>
+  <div class="grid"><div><label>Dinlənmə sayı</label><input id="siteViews" placeholder="100K+"></div><div><label>Yeni dövr / il</label><input id="siteYear" placeholder="2026"></div></div>
+  <div class="savebar"><button onclick="saveSite()">💾 Yadda saxla</button><span id="siteMsg" class="hint">Bu bölmədə etdiyin dəyişiklikləri yadda saxla.</span></div>
+ </div>
+</section>
+
+<section id="songs" class="section">
+ <div class="card"><h2>🎵 Mahnı əlavə et / redaktə et</h2><div class="grid">
+  <div><label>Mahnının adı</label><input id="songName" placeholder="Gecəmin Ulduzu"></div><div><label>Müğənni</label><input id="songArtist" placeholder="ROYA"></div>
+  <div><label>Kateqoriya</label><select id="songCategory"></select></div><div><label>Cover linki</label><input id="songCover" placeholder="https://..."></div>
+  <div><label>Audio linki</label><input id="songAudio" placeholder="https://...mp3"></div><div><label>Klip linki (istəyə görə)</label><input id="songVideo" placeholder="YouTube və ya .mp4"></div>
+ </div><div class="savebar"><button id="songSaveBtn" onclick="saveSong()">💾 Mahnını yadda saxla</button><button class="secondary" onclick="clearSongForm()">Təmizlə</button><span id="songMsg" class="hint"></span></div></div>
+ <div class="card"><h2>📋 Mahnılar</h2><div id="songList"></div></div>
+</section>
+
+<section id="clips" class="section">
+ <div class="card"><h2>🎬 Klip əlavə et / redaktə et</h2><div class="grid">
+  <div><label>Klip adı</label><input id="clipTitle" placeholder="Klip adı"></div><div><label>Müğənni</label><input id="clipArtist" placeholder="ROYA"></div>
+  <div><label>Cover linki</label><input id="clipCover" placeholder="https://..."></div><div><label>Video / YouTube linki</label><input id="clipUrl" placeholder="https://youtube.com/..."></div>
+  <div><label>Kateqoriya</label><select id="clipCategory"></select></div><div><label>İl</label><input id="clipYear" placeholder="2026"></div>
+ </div><div class="savebar"><button id="clipSaveBtn" onclick="saveClip()">💾 Klipi yadda saxla</button><button class="secondary" onclick="clearClipForm()">Təmizlə</button><span id="clipMsg" class="hint"></span></div></div>
+ <div class="card"><h2>📋 Kliplər</h2><div id="clipList"></div></div>
+</section>
+
+<section id="categories" class="section">
+ <div class="card"><h2>📂 Kateqoriyalar</h2><div class="grid"><div><label>Yeni kateqoriya</label><input id="newCategory" placeholder="Məsələn: Xarici"></div><div><label>Kateqoriya adı dəyiş</label><select id="renameCategorySelect"></select></div></div>
+  <div class="grid"><div><label>Yeni ad (redaktə üçün)</label><input id="renameCategoryInput" placeholder="Yeni ad"></div><div class="notice">Kateqoriya əlavə, sil və ad dəyişiklikləri əvvəlcə burada hazırlanır, sonra aşağıdakı “Yadda saxla” ilə tətbiq olunur.</div></div>
+  <div class="savebar"><button onclick="saveCategories()">💾 Kateqoriyaları yadda saxla</button><span id="categoryMsg" class="hint"></span></div>
+ </div>
+ <div class="card"><h2>📋 Mövcud kateqoriyalar</h2><div id="categoryList"></div></div>
+</section>
+
+<section id="appearance" class="section">
+ <div class="card"><h2>🖼️ Görünüş</h2>
+  <label>Hero / banner şəkli</label><input id="appearanceBanner" placeholder="images/artist.png və ya https://..."><label>Arxa fon şəkli</label><input id="appearanceBackground" placeholder="https://..."><label>Vurğu rəngi</label><input id="appearanceColor" placeholder="#9d45ff">
+  <div class="savebar"><button onclick="saveAppearance()">💾 Görünüşü yadda saxla</button><span id="appearanceMsg" class="hint"></span></div>
+ </div>
+</section>
+
+<section id="social" class="section">
+ <div class="card"><h2>🌐 Sosial şəbəkələr və əlaqə</h2><div class="grid">
+  <div><label>Instagram</label><input id="socialInstagram" placeholder="https://instagram.com/..."></div><div><label>TikTok</label><input id="socialTiktok" placeholder="https://tiktok.com/@..."></div>
+  <div><label>YouTube</label><input id="socialYoutube" placeholder="https://youtube.com/..."></div><div><label>Spotify</label><input id="socialSpotify" placeholder="https://open.spotify.com/..."></div>
+  <div><label>Facebook</label><input id="socialFacebook" placeholder="https://facebook.com/..."></div><div><label>Telegram</label><input id="socialTelegram" placeholder="https://t.me/..."></div>
+  <div><label>WhatsApp</label><input id="socialWhatsapp" placeholder="https://wa.me/994..."></div><div><label>E-poçt</label><input id="socialEmail" type="email" placeholder="email@example.com"></div>
+  <div><label>Telefon</label><input id="socialPhone" placeholder="+994..."></div>
+ </div><label>Ünvan / əlavə əlaqə məlumatı</label><textarea id="socialAddress" placeholder="Bakı, Azərbaycan..."></textarea>
+  <div class="savebar"><button onclick="saveSocial()">💾 Sosial və əlaqə məlumatlarını yadda saxla</button><span id="socialMsg" class="hint"></span></div>
+ </div>
+</section>
+
+<section id="gallery" class="section">
+ <div class="card"><h2>🖼️ Qalereya</h2>
+  <label>Şəkil linki</label><input id="galleryUrl" placeholder="images/artist.png və ya https://...">
+  <div class="savebar"><button onclick="saveGallery()">💾 Qalereyanı yadda saxla</button><span id="galleryMsg" class="hint"></span></div>
+ </div>
+ <div class="card"><h2>📋 Qalereya şəkilləri</h2><div id="galleryList"></div></div>
+</section>
+
+<section id="final" class="section">
+ <div class="card final"><h2>🚀 Yekun — CONFIG.JS</h2><p style="color:#aaa">Bütün bölmələrdə “Yadda saxla” düymələrini basdıqdan sonra buradan bir dəfə <b>CONFIG.JS YARAT</b> et. Aşağıdakı kod bütün cari dəyişikliklərin yekunudur.</p>
+  <div class="row"><button class="ok" onclick="generateConfig()">📄 TAM CONFIG.JS KODU</button><button class="secondary" onclick="copyConfig()">📋 Kodu kopyala</button></div>
+  <div id="configMsg" class="notice"></div>
+  <label>Hazır config.js kodu</label><textarea id="configCode" class="codebox" readonly></textarea>
+ </div>
+</section>
+
+<div class="sticky-config"><div class="card final" style="padding:14px"><div class="row" style="align-items:center;justify-content:space-between"><strong>Son addım: bütün dəyişiklikləri fayla çevir</strong><button class="ok" onclick="generateConfig()">📄 TAM CONFIG.JS KODU</button></div></div></div>
+</main></div>
+
+<script src="config.js"></script>
+<script>
+const KEY='royaAdminData';
+const defaults={site:{name:'',title:'',description:'',about:'',logo:'',url:'',views:'100K+',year:'2026'},appearance:{banner:'',background:'',color:'#9d45ff'},social:{instagram:'',tiktok:'',youtube:'',spotify:'',facebook:'',telegram:'',whatsapp:'',email:'',phone:'',address:''},categories:['Azeri','Turk','Rus','Uşaq','Kino','Digər'],songs:[],clips:[],gallery:[]};
+let data=loadData(); let editingSong=null,editingClip=null; let pendingCategories=JSON.parse(JSON.stringify(data.categories));
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function normalizeConfig(c){c=c||{};const site=c.site||{};const social={...defaults.social,...(c.social||{})};const appearance={...defaults.appearance,...(c.appearance||{})};let songs=Array.isArray(c.songs)?c.songs.map((s,i)=>({id:s.id||Date.now()+i,name:s.name||s.title||'',title:s.title||s.name||'',artist:s.artist||'',category:s.category||'Azeri',cover:s.cover||'',audio:s.audio||'',video:s.video||'',year:s.year||new Date().getFullYear()})):[];let clips=Array.isArray(c.clips)?c.clips:[];if(!clips.length&&Array.isArray(c.videos))clips=c.videos.map((v,i)=>({id:Date.now()+i,title:v.title||'Musiqi klipi',artist:'',cover:'',url:v.youtube||v.video||'',category:'Azeri',year:new Date().getFullYear()}));let categories=Array.isArray(c.categories)&&c.categories.length?c.categories.slice():defaults.categories.slice();return {site:{...defaults.site,...site,name:site.name||c.artistName||'',title:site.title||c.artistFullName||'',description:site.description||c.artistDescription||c.aboutText||'',about:site.about||c.aboutText||site.description||'',logo:site.logo||'',url:site.url||'',views:site.views||c.stats?.views||'100K+',year:site.year||c.stats?.year||String(new Date().getFullYear())},appearance,social,categories,songs,clips,gallery:Array.isArray(c.gallery)?c.gallery.slice():[]}}
+function loadData(){try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved)return {...clone(defaults),...saved,site:{...defaults.site,...(saved.site||{})},appearance:{...defaults.appearance,...(saved.appearance||{})},social:{...defaults.social,...(saved.social||{})},categories:saved.categories?.length?saved.categories:clone(defaults.categories),songs:saved.songs||[],clips:saved.clips||[],gallery:saved.gallery||[]};if(typeof SITE_CONFIG!=='undefined'){return normalizeConfig(SITE_CONFIG)}const legacy=JSON.parse(localStorage.getItem('royaSongs')||'[]');return {...clone(defaults),songs:legacy.map((s,i)=>({id:s.id||Date.now()+i,name:s.name||s.title||'',title:s.title||s.name||'',artist:s.artist||'',category:s.category||'Azeri',cover:s.cover||'',audio:s.audio||'',video:s.video||'',year:s.year||'2026'}))}}catch(e){return clone(defaults)}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem('royaSongs',JSON.stringify(data.songs));refreshAll()}
+function openTab(id,btn){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('aside button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='final')document.getElementById('configCode').value=buildConfig()}
+function go(id){const btn=[...document.querySelectorAll('aside button')].find(b=>b.textContent.toLowerCase().includes(id==='songs'?'mahnılar':id==='clips'?'kliplər':''));openTab(id,btn)}
+function val(id){return document.getElementById(id).value.trim()} function setVal(id,v){const e=document.getElementById(id);if(e)e.value=v??''}
+function msg(id,text,ok=true){const e=document.getElementById(id);if(e){e.textContent=text;e.className='hint '+(ok?'':'danger-text');setTimeout(()=>{e.textContent=''},3000)}}
+function fillForms(){setVal('siteName',data.site.name);setVal('siteTitle',data.site.title);setVal('siteDescription',data.site.description);setVal('siteAbout',data.site.about);setVal('siteViews',data.site.views);setVal('siteYear',data.site.year);setVal('siteLogo',data.site.logo);setVal('siteUrl',data.site.url);setVal('appearanceBanner',data.appearance.banner);setVal('appearanceBackground',data.appearance.background);setVal('appearanceColor',data.appearance.color);Object.keys(data.social).forEach(k=>setVal('social'+k.charAt(0).toUpperCase()+k.slice(1),data.social[k]));renderCategorySelects();renderCategoryRename();const lp=document.getElementById('logoPreview');if(data.site.logo){lp.src=data.site.logo;lp.style.display='block'}}
+function saveSite(){data.site={name:val('siteName'),title:val('siteTitle'),description:val('siteDescription'),about:val('siteAbout'),logo:val('siteLogo'),url:val('siteUrl'),views:val('siteViews'),year:val('siteYear')};persist();const lp=document.getElementById('logoPreview');if(data.site.logo){lp.src=data.site.logo;lp.style.display='block'}else lp.style.display='none';msg('siteMsg','✅ Sayt ayarları yadda saxlanıldı.')}
+function saveAppearance(){let color=val('appearanceColor')||'#9d45ff';if(!/^#[0-9a-fA-F]{6}$/.test(color))return msg('appearanceMsg','❌ Rəng #RRGGBB formatında olmalıdır.',false);data.appearance={banner:val('appearanceBanner'),background:val('appearanceBackground'),color};persist();msg('appearanceMsg','✅ Görünüş yadda saxlanıldı.')}
+function saveSocial(){data.social={instagram:val('socialInstagram'),tiktok:val('socialTiktok'),youtube:val('socialYoutube'),spotify:val('socialSpotify'),facebook:val('socialFacebook'),telegram:val('socialTelegram'),whatsapp:val('socialWhatsapp'),email:val('socialEmail'),phone:val('socialPhone'),address:val('socialAddress')};persist();msg('socialMsg','✅ Sosial və əlaqə məlumatları yadda saxlanıldı.')}
+function renderCategorySelects(){['songCategory','clipCategory'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const cur=el.value;el.innerHTML=data.categories.map(c=>`<option value="${escAttr(c)}">${esc(c)}</option>`).join('');if(data.categories.includes(cur))el.value=cur})}
+function renderCategoryRename(){const el=document.getElementById('renameCategorySelect');if(!el)return;el.innerHTML=pendingCategories.map((c,i)=>`<option value="${i}">${esc(c)}</option>`).join('')}
+function saveCategories(){
+ const n=val('newCategory');
+ const ri=parseInt(document.getElementById('renameCategorySelect').value);
+ const rn=val('renameCategoryInput');
+ const oldCategories=clone(data.categories);
+ if(n){
+   if(pendingCategories.some(c=>c.toLowerCase()===n.toLowerCase()))return msg('categoryMsg','❌ Bu kateqoriya artıq var.',false);
+   pendingCategories.push(n);setVal('newCategory','');
+ }
+ if(rn && Number.isInteger(ri) && pendingCategories[ri]){
+   if(pendingCategories.some((c,i)=>i!==ri&&c.toLowerCase()===rn.toLowerCase()))return msg('categoryMsg','❌ Bu ad artıq istifadə olunur.',false);
+   pendingCategories[ri]=rn;
+   setVal('renameCategoryInput','');
+ }
+ oldCategories.forEach((oldName,i)=>{
+   const newName=pendingCategories[i];
+   if(newName && oldName!==newName){
+     data.songs.forEach(song=>{if(song.category===oldName)song.category=newName});
+     data.clips.forEach(clip=>{if(clip.category===oldName)clip.category=newName});
+   }
+ });
+ data.categories=clone(pendingCategories);
+ persist();
+ renderCategoryRename();
+ msg('categoryMsg','✅ Kateqoriyalar yadda saxlanıldı.');
+}
+function deleteCategory(i){
+ if(pendingCategories.length<=1)return alert('Ən azı bir kateqoriya qalmalıdır.');
+ if(confirm('Bu kateqoriya silinsin?')){
+   pendingCategories.splice(i,1);
+   renderCategoryRename();
+   renderCategories();
+   msg('categoryMsg','🟡 Silinmə hazırlandı. Aşağıdakı “Yadda saxla” düyməsinə bas.');
+ }
+}
+function saveGallery(){const u=val('galleryUrl');if(!u)return msg('galleryMsg','❌ Şəkil linki yazılmalıdır.',false);if(data.gallery.includes(u))return msg('galleryMsg','❌ Bu şəkil artıq var.',false);data.gallery.push(u);setVal('galleryUrl','');persist();msg('galleryMsg','✅ Şəkil qalereyaya əlavə edildi.')}
+function deleteGallery(i){if(confirm('Bu şəkil silinsin?')){data.gallery.splice(i,1);persist();msg('galleryMsg','✅ Şəkil silindi.')}}
+function saveSong(){const s={id:editingSong||Date.now(),name:val('songName'),title:val('songName'),artist:val('songArtist'),category:document.getElementById('songCategory').value,cover:val('songCover'),audio:val('songAudio'),video:val('songVideo'),year:String(new Date().getFullYear())};if(!s.name||!s.artist)return msg('songMsg','❌ Mahnı adı və müğənni mütləqdir.',false);if(editingSong){const i=data.songs.findIndex(x=>x.id===editingSong);if(i>=0)data.songs[i]=s}else data.songs.push(s);clearSongForm();persist();msg('songMsg','✅ Mahnı yadda saxlanıldı.')}
+function editSong(id){const s=data.songs.find(x=>x.id===id);if(!s)return;editingSong=id;setVal('songName',s.name||s.title);setVal('songArtist',s.artist);setVal('songCover',s.cover);setVal('songAudio',s.audio);setVal('songVideo',s.video);renderCategorySelects();setVal('songCategory',s.category);document.getElementById('songSaveBtn').textContent='💾 Mahnını yenilə';go('songs')}
+function deleteSong(id){if(confirm('Bu mahnı silinsin?')){data.songs=data.songs.filter(x=>x.id!==id);persist()}}
+function clearSongForm(){editingSong=null;['songName','songArtist','songCover','songAudio','songVideo'].forEach(id=>setVal(id,''));document.getElementById('songSaveBtn').textContent='💾 Mahnını yadda saxla'}
+function saveClip(){const c={id:editingClip||Date.now(),title:val('clipTitle'),artist:val('clipArtist'),cover:val('clipCover'),url:val('clipUrl'),category:document.getElementById('clipCategory').value,year:val('clipYear')||String(new Date().getFullYear())};if(!c.title||!c.url)return msg('clipMsg','❌ Klip adı və video linki mütləqdir.',false);if(editingClip){const i=data.clips.findIndex(x=>x.id===editingClip);if(i>=0)data.clips[i]=c}else data.clips.push(c);clearClipForm();persist();msg('clipMsg','✅ Klip yadda saxlanıldı.')}
+function editClip(id){const c=data.clips.find(x=>x.id===id);if(!c)return;editingClip=id;setVal('clipTitle',c.title);setVal('clipArtist',c.artist);setVal('clipCover',c.cover);setVal('clipUrl',c.url);setVal('clipYear',c.year);renderCategorySelects();setVal('clipCategory',c.category);document.getElementById('clipSaveBtn').textContent='💾 Klipi yenilə';go('clips')}
+function deleteClip(id){if(confirm('Bu klip silinsin?')){data.clips=data.clips.filter(x=>x.id!==id);persist()}}
+function clearClipForm(){editingClip=null;['clipTitle','clipArtist','clipCover','clipUrl','clipYear'].forEach(id=>setVal(id,''));document.getElementById('clipSaveBtn').textContent='💾 Klipi yadda saxla'}
+function renderSongs(){const box=document.getElementById('songList');if(!data.songs.length){box.innerHTML='<div class="empty">Hələ mahnı yoxdur.</div>';return}box.innerHTML=data.songs.map((s,i)=>`<div class="item"><img class="thumb" src="${escAttr(s.cover||'')}" onerror="this.style.visibility='hidden'"><div class="item-info"><strong>${i+1}. ${esc(s.name||s.title)}</strong><small>${esc(s.artist)} • ${esc(s.category)}</small><span class="badge">${s.audio?'🎵 Audio':'⚠️ Audio yoxdur'} ${s.video?' • 🎬 Klip':''}</span></div><div class="item-actions"><button onclick="editSong(${s.id})">✏️ Redaktə</button><button class="danger" onclick="deleteSong(${s.id})">🗑 Sil</button></div></div>`).join('')}
+function renderClips(){const box=document.getElementById('clipList');if(!data.clips.length){box.innerHTML='<div class="empty">Hələ klip yoxdur.</div>';return}box.innerHTML=data.clips.map((c,i)=>`<div class="item"><img class="thumb" src="${escAttr(c.cover||'')}" onerror="this.style.visibility='hidden'"><div class="item-info"><strong>${i+1}. ${esc(c.title)}</strong><small>${esc(c.artist||'')} • ${esc(c.year||'')} • ${esc(c.category||'')}</small><span class="badge">🎬 Video</span></div><div class="item-actions"><button onclick="editClip(${c.id})">✏️ Redaktə</button><button class="danger" onclick="deleteClip(${c.id})">🗑 Sil</button></div></div>`).join('')}
+function renderCategories(){document.getElementById('categoryList').innerHTML=pendingCategories.map((c,i)=>`<div class="item"><div class="item-info"><strong>${i+1}. ${esc(c)}</strong></div><div class="item-actions"><button class="danger" onclick="deleteCategory(${i})">🗑 Sil</button></div></div>`).join('')}
+function renderGallery(){const box=document.getElementById('galleryList');if(!data.gallery.length){box.innerHTML='<div class="empty">Hələ şəkil yoxdur.</div>';return}box.innerHTML=data.gallery.map((u,i)=>`<div class="item"><img class="thumb" src="${escAttr(u)}" onerror="this.style.visibility='hidden'"><div class="item-info"><strong>${i+1}. Şəkil</strong><small>${esc(u)}</small></div><div class="item-actions"><button class="danger" onclick="deleteGallery(${i})">🗑 Sil</button></div></div>`).join('')}
+function refreshAll(){renderSongs();renderClips();renderCategories();renderGallery();renderCategorySelects();document.getElementById('statSongs').textContent=data.songs.length;document.getElementById('statClips').textContent=data.clips.length;document.getElementById('statCats').textContent=data.categories.length;document.getElementById('statSocial').textContent=Object.values(data.social).filter(Boolean).length}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}function escAttr(s){return esc(s).replace(/`/g,'&#096;')}
+function buildConfig(){const legacySongs=data.songs.map(s=>({title:s.title||s.name,year:s.year||String(new Date().getFullYear()),artist:s.artist||'',category:s.category||'',cover:s.cover||'',audio:s.audio||'',video:s.video||'',name:s.name||s.title}));const legacyVideos=data.clips.map(c=>({title:c.title||'Musiqi klipi',youtube:c.url||'',artist:c.artist||'',category:c.category||'',cover:c.cover||'',year:c.year||''}));const cfg={site:data.site,appearance:data.appearance,social:data.social,categories:data.categories,songs:data.songs,clips:data.clips,links:[],artistName:data.site.name||'',artistFullName:data.site.title||data.site.name||'',artistDescription:data.site.description||'',aboutText:data.site.about||data.site.description||'',artistImage:data.appearance.banner||'',stats:{songs:data.songs.length,videos:data.clips.length,views:data.site.views||'100K+',year:data.site.year||String(new Date().getFullYear())},contact:{email:data.social.email||'',whatsapp:data.social.whatsapp||''},videos:legacyVideos,gallery:data.gallery};return 'const SITE_CONFIG = '+JSON.stringify(cfg,null,4)+';\n'}
+function generateConfig(){const code=buildConfig();document.getElementById('configCode').value=code;document.getElementById('configCode').scrollIntoView({behavior:'smooth',block:'center'});msg('configMsg','✅ Tam config.js kodu aşağıda yaradıldı. Kodu kopyalayıb config.js faylına yerləşdir.');msg('dashMsg','✅ Tam config.js kodu yaradıldı.');}
+async function copyConfig(){const code=buildConfig();document.getElementById('configCode').value=code;try{await navigator.clipboard.writeText(code);msg('configMsg','✅ Kod kopyalandı.')}catch(e){document.getElementById('configCode').select();document.execCommand('copy');msg('configMsg','✅ Kod kopyalandı.')}}
+fillForms();refreshAll();document.getElementById('configCode').value=buildConfig();
+</script>
+
+<section class="admin-section" id="productToolsSection">
+  <div class="section-title">🛠️ MƏHSUL ALƏTLƏRİ</div>
+  <div class="product-tools">
+    <div class="product-tool">
+      <h4>💾 BACKUP</h4>
+      <p>Bütün hazırkı məlumatları JSON backup kimi saxla.</p>
+      <button type="button" class="btn" id="exportBackupBtn">BACKUP YARAT</button>
+    </div>
+    <div class="product-tool">
+      <h4>↩️ BƏRPA</h4>
+      <p>Əvvəlki JSON backup faylından məlumatları geri gətir.</p>
+      <button type="button" class="btn" id="importBackupBtn">BACKUP BƏRPA ET</button>
+      <input type="file" id="backupFileInput" class="hidden-file" accept=".json,application/json">
+    </div>
+    <div class="product-tool">
+      <h4>📋 KOPYALA</h4>
+      <p>Yaradılmış tam config.js kodunu bir kliklə kopyala.</p>
+      <button type="button" class="btn" id="copyConfigBtn">CONFIG KOPYALA</button>
+    </div>
+    <div class="product-tool">
+      <h4>👁️ SAYTI AÇ</h4>
+      <p>Dəyişikliklərdən sonra əsas saytı yeni tabda yoxla.</p>
+      <button type="button" class="btn" id="openSiteBtn">SAYTI AÇ</button>
+    </div>
+  </div>
+
+  <div class="drop-zone" id="backupDropZone">
+    JSON backup faylını buraya sürüklə və burax
+  </div>
+  <div class="backup-status" id="productStatus"></div>
+  <p class="product-note">
+    Bu versiya server bazası tələb etmir. Məlumatlar brauzerdə localStorage-da saxlanır,
+    backup/restore edilir və tam config.js kodu yaradılır. Real online multi-user CMS üçün server/backend ayrıca tələb olunur.
+  </p>
+</section>
+
+
+<script id="product-cms-script">
+(function(){
+  const KEY = "artist_site_product_state";
+  const BACKUP_VERSION = 1;
+
+  function setStatus(text){
+    const el = document.getElementById("productStatus");
+    if(el) el.textContent = text;
+  }
+
+  function currentState(){
+    const raw = localStorage.getItem(KEY);
+    return {
+      version: BACKUP_VERSION,
+      createdAt: new Date().toISOString(),
+      data: raw ? JSON.parse(raw) : null
+    };
+  }
+
+  function downloadText(filename, text, type){
+    const blob = new Blob([text], {type:type || "text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+
+  function exportBackup(){
+    try{
+      downloadText(
+        "artist-site-backup-" + new Date().toISOString().slice(0,10) + ".json",
+        JSON.stringify(currentState(), null, 2),
+        "application/json;charset=utf-8"
+      );
+      setStatus("✅ Backup yaradıldı.");
+    }catch(e){
+      setStatus("❌ Backup yaradıla bilmədi.");
+    }
+  }
+
+  function restoreFile(file){
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(){
+      try{
+        const payload = JSON.parse(reader.result);
+        if(!payload || payload.version !== BACKUP_VERSION || !("data" in payload)){
+          throw new Error("Uyğunsuz backup");
+        }
+        localStorage.setItem(KEY, JSON.stringify(payload.data));
+        setStatus("✅ Backup bərpa edildi. Səhifəni yenilə.");
+        setTimeout(()=>location.reload(),700);
+      }catch(e){
+        setStatus("❌ Backup faylı düzgün deyil.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    const exp = document.getElementById("exportBackupBtn");
+    const imp = document.getElementById("importBackupBtn");
+    const input = document.getElementById("backupFileInput");
+    const copy = document.getElementById("copyConfigBtn");
+    const open = document.getElementById("openSiteBtn");
+    const drop = document.getElementById("backupDropZone");
+
+    if(exp) exp.addEventListener("click", exportBackup);
+    if(imp && input) imp.addEventListener("click", ()=>input.click());
+    if(input) input.addEventListener("change", ()=>restoreFile(input.files[0]));
+
+    if(copy){
+      copy.addEventListener("click", async function(){
+        const box = document.getElementById("configCode");
+        if(!box) return setStatus("Config kod sahəsi tapılmadı.");
+        try{
+          await navigator.clipboard.writeText(box.value);
+          setStatus("✅ Tam config.js kodu kopyalandı.");
+        }catch(e){
+          box.select();
+          document.execCommand("copy");
+          setStatus("✅ Tam config.js kodu kopyalandı.");
+        }
+      });
+    }
+
+    if(open){
+      open.addEventListener("click", ()=>window.open("index.html","_blank"));
+    }
+
+    if(drop){
+      ["dragenter","dragover"].forEach(ev=>{
+        drop.addEventListener(ev, e=>{
+          e.preventDefault();
+          drop.classList.add("dragover");
+        });
+      });
+      ["dragleave","drop"].forEach(ev=>{
+        drop.addEventListener(ev, e=>{
+          e.preventDefault();
+          drop.classList.remove("dragover");
+        });
+      });
+      drop.addEventListener("drop", e=>{
+        const file = e.dataTransfer.files[0];
+        restoreFile(file);
+      });
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
